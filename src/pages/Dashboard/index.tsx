@@ -7,14 +7,14 @@ import type { NoteProps } from "../../@types/note";
 import { useNote } from "../../contexts/useNote";
 
 export function Dashboard() {
-  const { notes } = useNote()
+  const { filteredNotes } = useNote()
   const [favoriteNotes, setFavoriteNotes] = useState<NoteProps[]>([]);
   const [othersNotes, setOthersNotes] = useState<NoteProps[]>([]);
 
   useEffect(() => {
-    setFavoriteNotes(notes.filter((note) => note.favorite));
-    setOthersNotes(notes.filter((note) => !note.favorite));
-  }, [notes]);
+    setFavoriteNotes(filteredNotes.filter((note) => note.favorite));
+    setOthersNotes(filteredNotes.filter((note) => !note.favorite));
+  }, [filteredNotes]);
 
   return (
     <DashboardContainer>

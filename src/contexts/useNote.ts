@@ -3,6 +3,9 @@ import type { NoteProps } from "../@types/note";
 
 interface NoteContextType {
   notes: NoteProps[];
+  filteredNotes: NoteProps[];
+  searchText: string;
+  setSearchText: (text: string) => void;
   addNote: (title: string, description: string, favorite: boolean, color: string) => Promise<void>;
   getAllNotes: () => Promise<void>;
   updateNote: (id: string, title: string, description: string) => Promise<void>;

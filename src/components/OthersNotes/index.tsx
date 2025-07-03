@@ -20,6 +20,7 @@ export function OthersNotes({ othersNotes }: OthersNotesProps) {
               title={note.title}
               description={note.description}
               favorite={note.favorite}
+              colorProp={note.color}
             />
           ))}
       </OthersContent>

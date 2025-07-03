@@ -6,6 +6,12 @@ import { NotesContext } from "./useNote";
 // Provider que vai envolver seu app ou parte do app
 export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const [notes, setNote] = useState<NoteProps[]>([]);
+  const [searchText, setSearchText] = useState("");
+
+  const filteredNotes = notes.filter((note) =>
+    note.title.toLowerCase().includes(searchText.toLowerCase()) ||
+    note.description.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   const getAllNotes = async () => {
     try {
@@ -88,26 +94,29 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const toggleColor = async (id: string, color: string) => {
-  try {
-    const response = await axios.patch(
-      `http://localhost:3000/api/notes/${id}/color`,
-      { color }
-    );
-    const updatedNote = response.data;
+    try {
+      const response = await axios.patch(
+        `http://localhost:3000/api/notes/${id}/color`,
+        { color }
+      );
+      const updatedNote = response.data;
 
-    setNote((oldNotes) =>
-      oldNotes.map((note) => (note.id === id ? updatedNote : note))
-    );
-  } catch (error) {
-    console.error("Erro ao alternar cor da nota:", error);
-    throw error;
-  }
-};
+      setNote((oldNotes) =>
+        oldNotes.map((note) => (note.id === id ? updatedNote : note))
+      );
+    } catch (error) {
+      console.error("Erro ao alternar cor da nota:", error);
+      throw error;
+    }
+  };
 
   return (
     <NotesContext.Provider
       value={{
         notes,
+        filteredNotes,
+        searchText,
+        setSearchText,
         addNote,
         getAllNotes,
         updateNote,

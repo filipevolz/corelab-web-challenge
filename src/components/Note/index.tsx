@@ -53,6 +53,7 @@ export function Note({
   const [color, setColor] = useState<string>(colorProp);
   const [editableTitle, setEditableTitle] = useState(title);
   const [editableDescription, setEditableDescription] = useState(description);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useLayoutEffect(() => {
     if (showPalette && buttonRef.current) {
@@ -68,6 +69,7 @@ export function Note({
     try {
       await updateNote(id, editableTitle, editableDescription);
       toast.success("Nota atualizada com sucesso!");
+      setIsDialogOpen(false);
     } catch (error) {
       console.error("Erro ao atualizar nota:", error);
       toast.error("Erro ao atualizar nota.");
@@ -124,10 +126,10 @@ export function Note({
           ref={buttonRef}
           style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
         >
-          <Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <form>
               <DialogTrigger asChild>
-                <EditCard aria-label="Editar nota">
+                <EditCard aria-label="Editar nota" onClick={() => setIsDialogOpen(true)}>
                   <Pencil size={18} />
                 </EditCard>
               </DialogTrigger>
