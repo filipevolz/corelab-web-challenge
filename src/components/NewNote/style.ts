@@ -64,7 +64,7 @@ export const InputContentNewNote = styled.textarea`
 export const FavoriteButton = styled.button`
   display: flex;
   border: none;
-  background-color: #FFF;
+  background-color: none;
   cursor: pointer;
 
   svg {

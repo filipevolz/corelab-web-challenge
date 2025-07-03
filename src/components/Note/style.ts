@@ -54,7 +54,7 @@ export const Button = styled.button`
   border: none;
   display: flex;
   cursor: pointer;
-  background-color: #FFF;
+  background-color: none;
 `
 
 export const EditCard = styled(Button)``

@@ -20,6 +20,7 @@ export function FavoriteNotes({ favoriteNotes }: FavotireNotesProps) {
               title={note.title}
               description={note.description}
               favorite={note.favorite}
+              colorProp={note.color}
             />
           ))}
       </FavoriteContent>

@@ -3,7 +3,7 @@ import type { NoteProps } from "../@types/note";
 
 interface NoteContextType {
   notes: NoteProps[];
-  addNote: (title: string, description: string, favorite: boolean) => Promise<void>;
+  addNote: (title: string, description: string, favorite: boolean, color: string) => Promise<void>;
   getAllNotes: () => Promise<void>;
   updateNote: (id: string, title: string, description: string) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;

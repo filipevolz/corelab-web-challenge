@@ -44,12 +44,13 @@ export function NewNote() {
 
   async function handleCreateNewNote(data: NewNoteForm) {
     try {
-      await addNote(data.title, data.description, data.favorite);
+      await addNote(data.title, data.description, data.favorite, "#FFF");
       toast.success("Nota criada com sucesso!");
       setValue("title", "");
       setValue("description", "");
       setValue("favorite", false);
     } catch (error) {
+      toast.error("Tente novamente mais tarde!")
       console.error(error);
     }
   }

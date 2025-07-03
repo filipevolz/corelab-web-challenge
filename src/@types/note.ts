@@ -3,6 +3,7 @@ export interface NoteProps {
   title: string;
   description: string;
   favorite: boolean;
+  color: string;
 }
 
 export interface NotesProps {

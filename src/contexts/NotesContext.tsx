@@ -25,13 +25,15 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const addNote = async (
     title: string,
     description: string,
-    favorite: boolean
+    favorite: boolean,
+    color: string
   ) => {
     try {
       const response = await axios.post("http://localhost:3000/api/notes", {
         title,
         description,
         favorite,
+        color
       });
       const newNote = response.data;
       setNote((oldNotes) => [...oldNotes, newNote]);

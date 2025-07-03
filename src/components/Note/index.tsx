@@ -35,20 +35,22 @@ interface NoteProps {
   title: string;
   description: string;
   favorite: boolean;
+  colorProp: string;
 }
 
 export function Note({
   id,
   title,
   description,
+  colorProp,
   favorite: initialFavorite,
 }: NoteProps) {
-  const [color, setColor] = useState<string>("#FFFFFF");
   const [showPalette, setShowPalette] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
   const [palettePosition, setPalettePosition] = useState({ top: 0, left: 0 });
   const [favorite, setFavorite] = useState(initialFavorite);
-  const { updateNote, deleteNote, toggleFavorite } = useNote();
+  const { updateNote, deleteNote, toggleFavorite, toggleColor } = useNote();
+  const [color, setColor] = useState<string>(colorProp);
   const [editableTitle, setEditableTitle] = useState(title);
   const [editableDescription, setEditableDescription] = useState(description);
 
@@ -64,7 +66,7 @@ export function Note({
 
   async function handleUpdateNote() {
     try {
-      await updateNote(id, editableTitle, editableDescription, favorite);
+      await updateNote(id, editableTitle, editableDescription);
       toast.success("Nota atualizada com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar nota:", error);
@@ -194,9 +196,15 @@ export function Note({
             {colors.map((c) => (
               <div
                 key={c}
-                onClick={() => {
+                onClick={async() => {
                   setColor(c);
                   setShowPalette(false);
+                  try {
+                    await toggleColor(id, c);
+                  } catch (error) {
+                    console.error("Erro ao trocar cor:", error);
+                    toast.error("Erro ao trocar cor.");
+                  }
                 }}
                 style={{
                   width: "36px",
