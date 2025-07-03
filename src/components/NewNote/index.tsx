@@ -10,6 +10,7 @@ import {
   NewNoteHeader,
 } from "./style";
 import { toast } from "react-toastify";
+import { useNote } from "../../contexts/useNote";
 
 const newNoteFormSchema = z.object({
   title: z.string().min(1, { message: "Título é obrigatório" }),
@@ -20,6 +21,8 @@ const newNoteFormSchema = z.object({
 type NewNoteForm = z.infer<typeof newNoteFormSchema>;
 
 export function NewNote() {
+  const { addNote } = useNote();
+
   const {
     register,
     handleSubmit,
@@ -39,12 +42,16 @@ export function NewNote() {
     setValue("favorite", !favorite);
   }
 
-  function handleCreateNewNote(data: NewNoteForm) {
-    console.log(data);
-    toast.success("Nota criada com sucesso!");
-    setValue("title", "");
-    setValue("description", "");
-    setValue("favorite", false);
+  async function handleCreateNewNote(data: NewNoteForm) {
+    try {
+      await addNote(data.title, data.description, data.favorite);
+      toast.success("Nota criada com sucesso!");
+      setValue("title", "");
+      setValue("description", "");
+      setValue("favorite", false);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function handleInvalidForm() {

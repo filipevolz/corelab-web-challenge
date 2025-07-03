@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 import { Pencil, Star, X } from "phosphor-react";
 import {
@@ -14,15 +13,32 @@ import {
 } from "./style";
 import { RiPaintFill } from "react-icons/ri";
 import { FavoriteButton } from "../NewNote/style";
+import { useNote } from "../../contexts/useNote";
+import { toast } from "react-toastify";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+  DialogFooter,
+} from "../ui/dialog";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 interface NoteProps {
-  id: number;
+  id: string;
   title: string;
   description: string;
   favorite: boolean;
 }
 
 export function Note({
+  id,
   title,
   description,
   favorite: initialFavorite,
@@ -32,6 +48,9 @@ export function Note({
   const buttonRef = useRef<HTMLDivElement>(null);
   const [palettePosition, setPalettePosition] = useState({ top: 0, left: 0 });
   const [favorite, setFavorite] = useState(initialFavorite);
+  const { updateNote, deleteNote, toggleFavorite } = useNote();
+  const [editableTitle, setEditableTitle] = useState(title);
+  const [editableDescription, setEditableDescription] = useState(description);
 
   useLayoutEffect(() => {
     if (showPalette && buttonRef.current) {
@@ -43,8 +62,24 @@ export function Note({
     }
   }, [showPalette]);
 
-  function toggleFavorite() {
+  async function handleUpdateNote() {
+    try {
+      await updateNote(id, editableTitle, editableDescription, favorite);
+      toast.success("Nota atualizada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao atualizar nota:", error);
+      toast.error("Erro ao atualizar nota.");
+    }
+  }
+
+  async function handleToggleFavorite(id: string) {
+    await toggleFavorite(id);
     setFavorite((prev) => !prev);
+  }
+
+  async function handleDeleteNote(id: string) {
+    await deleteNote(id);
+    toast.success("Nota deletada com sucesso!");
   }
 
   const colors = [
@@ -63,12 +98,12 @@ export function Note({
   ];
 
   return (
-    <NoteContainer color={color} >
+    <NoteContainer color={color}>
       <NoteHeader>
         <NoteTitle>{title}</NoteTitle>
         <FavoriteButton
           type="button"
-          onClick={toggleFavorite}
+          onClick={() => handleToggleFavorite(id)}
           aria-label="Favoritar nota"
         >
           <Star
@@ -87,23 +122,75 @@ export function Note({
           ref={buttonRef}
           style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
         >
-          <EditCard>
-            <Pencil size={18} />
-          </EditCard>
+          <Dialog>
+            <form>
+              <DialogTrigger asChild>
+                <EditCard aria-label="Editar nota">
+                  <Pencil size={18} />
+                </EditCard>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[425px] dialog-content">
+                <DialogHeader>
+                  <DialogTitle>Editar Nota</DialogTitle>
+                  <DialogDescription>
+                    Atualize o título e a descrição da sua nota. Clique em
+                    salvar quando terminar.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="grid gap-4 py-2">
+                  <div className="grid gap-2">
+                    <Label htmlFor={`title-${id}`}>Título</Label>
+                    <Input
+                      id={`title-${id}`}
+                      value={editableTitle}
+                      onChange={(e) => setEditableTitle(e.target.value)}
+                      required
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor={`description-${id}`}>Descrição</Label>
+                    <Input
+                      id={`description-${id}`}
+                      value={editableDescription}
+                      onChange={(e) => setEditableDescription(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancelar</Button>
+                  </DialogClose>
+                  <Button type="submit" onClick={() => handleUpdateNote()}>Salvar</Button>
+                </DialogFooter>
+              </DialogContent>
+            </form>
+          </Dialog>
+
           <RiPaintFill
             size={18}
             onClick={() => setShowPalette((prev) => !prev)}
             style={{ cursor: "pointer" }}
           />
         </div>
-        <DeleteCard onClick={() => console.log("oi")}>
+        <DeleteCard onClick={() => handleDeleteNote(id)}>
           <X size={14} />
         </DeleteCard>
       </NoteFooter>
 
       {showPalette &&
         createPortal(
-          <ColorsContent style={{ top: `${palettePosition.top}px`, left: `${palettePosition.left}px` }}>
+          <ColorsContent
+            style={{
+              top: `${palettePosition.top}px`,
+              left: `${palettePosition.left}px`,
+            }}
+          >
             {colors.map((c) => (
               <div
                 key={c}

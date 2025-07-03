@@ -28,3 +28,17 @@ body{
   width: 100%;
   min-height: 100vh;
 }
+
+.dialog-content {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+
+  input {
+    padding: 1rem;
+  }
+  
+  button {
+    padding: 1rem;
+    cursor: pointer;
+  }
+}

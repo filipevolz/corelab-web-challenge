@@ -1,5 +1,5 @@
 export interface NoteProps {
-  id: number;
+  id: string;
   title: string;
   description: string;
   favorite: boolean;
