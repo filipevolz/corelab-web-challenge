@@ -3,7 +3,6 @@ import type { NoteProps } from "../@types/note";
 import axios from "axios";
 import { NotesContext } from "./useNote";
 
-// Provider que vai envolver seu app ou parte do app
 export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const [notes, setNote] = useState<NoteProps[]>([]);
   const [searchText, setSearchText] = useState("");
